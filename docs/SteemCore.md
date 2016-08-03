@@ -298,3 +298,10 @@ setTimeout(doAjax, interval);
 
 </script>
 ```
+
+----
+
+
+# You get the point.
+
+You just need to set the data paramaters to whatever you need to create a new payment.
