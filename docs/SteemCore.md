@@ -133,9 +133,9 @@ This will return some more details about the completed transaction including **t
 
 Enough with the talk, let's make some real world, functional examples
 
-PHP + AJAX + HTML code
+###PHP + AJAX + HTML code
 
-PHP: doPayment.php
+**PHP** *doPayment.php*
 ```
 Route::get('/pay/new/', function($id)
 {
@@ -160,7 +160,7 @@ Route::get('/pay/new/', function($id)
 });
 ```
 
-HTML + AJAX index.html
+**HTML + AJAX** *index.html*
 
 ```
 <div class="row">
