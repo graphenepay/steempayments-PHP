@@ -126,3 +126,91 @@ After a successfull return, it's recommended to run `SteemHelper::detectDepositD
     };
 
 This will return some more details about the completed transaction including **time**, **block number**, and **trx_id**. You can link the trx_id to a `<a href>` towards the block explorer Steemd.com
+
+
+
+# Boiling it down to simple code :-)
+
+Enough with the talk, let's make some real world, functional examples
+
+PHP + AJAX + HTML code
+
+PHP: doPayment.php
+```
+Route::get('/pay/new/', function($id)
+{
+	$data = array(
+			'paymentID' => SteemHelper::generatePaymentID(),
+			'receiver' => $_ENV['STEEMPAY_ACCOUNT'],  	// OR, fixed account like 'steempayments'
+			'amount' => "0.001 SBD",			// 0 for variable amount chosen by the buyer/donator
+			'callback' => 0,				// If needed, a callback URL (not implemented yet!)
+	);
+
+	$success = SteemCore::makePayment($data);
+
+	if($success['status'] === 'success' && $success['success'] === true) {
+		$verifyPayment = SteemHelper::detectDepositDetails($id,'steempayments');
+			// You can access the return values with '$verifyPayment['xxx'], see SteemHelper Line 78';
+		return true; // Or do whatever you like to handle a success :-)
+
+	};
+
+	return false;
+
+});
+```
+
+HTML + AJAX index.html
+
+```
+<div class="row">
+	<h1>New payment</h1>
+	<p class="lead">Please follow the instructions carefully.</p>
+</div>
+
+<div class="row"  style="text-align: center">
+        <div class="col-md-12">
+        	<h3>Variable amount, 0.001 SDB minimum</h3>
+        </div>
+        <div class="col-md-12">
+        	Send <h4><strong>0.001 SDB</strong></h4> to account <h4><strong>steempayments</strong></h4>
+            	Using the memo code <h4><strong id="payID">paymentID</strong></h4>
+        </div>
+        <div class="col-md-12"  style="margin-top:40px;">
+            	Awaiting your payment
+            	<i class="fa fa-spinner fa-spin"></i>
+        </div>
+</div>
+
+
+<script>
+
+var interval = 1000;  // 1000 = 1 second
+var paymentID;
+
+$( document ).ready(function() {
+	paymentID = SteemHelper::generatePaymentID(); // Or copy/paste it inside the JS section to directly access the function
+	$(".payID").html(paymentID);
+	doAjax();
+});
+
+function doAjax() {
+	$.ajax({
+	    type: 'GET',
+	    url: '/pay/new/<?= $paymentID ?>',
+	    data: $(this).serialize(),
+	    dataType: 'json',
+	    success: function (data) {
+	    	console.log("Payment completed, redirecting to a thank you page.");
+	        window.location.href = "/payed/<?= $paymentID ?>"; // Or whatever you want to do
+	    },
+	    complete: function (data) {
+	        // Reloop until the payment is completed
+	        setTimeout(doAjax, interval);
+	    }
+	});
+}
+setTimeout(doAjax, interval);
+
+</script>
+```
