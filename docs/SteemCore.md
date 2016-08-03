@@ -137,7 +137,7 @@ Enough with the talk, let's make some real world, functional examples
 
 **PHP** *doPayment.php*
 ```
-Route::get('/pay/new/', function($id)
+Route::get('/pay/new/{id}', function($id)
 {
 	$data = array(
 			'paymentID' => $id,				// OR simply use SteemHelper::generatePaymentID()
@@ -199,6 +199,89 @@ function doAjax() {
 	    type: 'GET',
 	    url: '/pay/new/<?= $paymentID ?>',
 	    data: $(this).serialize(),
+	    dataType: 'json',
+	    success: function (data) {
+	    	console.log("Payment completed, redirecting to a thank you page.");
+	        window.location.href = "/payed/<?= $paymentID ?>"; // Or whatever you want to do
+	    },
+	    complete: function (data) {
+	        // Reloop until the payment is completed
+	        setTimeout(doAjax, interval);
+	    }
+	});
+}
+setTimeout(doAjax, interval);
+
+</script>
+```
+
+
+###PHP + AJAX + HTML code for PAYMENTS
+
+**PHP** *doPayment.php*
+```
+Route::get('/pay/new/{id}/{to}/{amount}', function($id, $to, $amount)
+{
+	$data = array(
+			'paymentID' => $id,				// OR simply use SteemHelper::generatePaymentID()
+			'receiver' => $to,  				// OR, fixed account like 'steempayments'
+			'amount' => $amount,				// 0 for variable amount chosen by the buyer/donator
+			'callback' => 0,				// If needed, a callback URL (not implemented yet!)
+	);
+
+	$success = SteemCore::makePayment($data);
+
+	if($success['status'] === 'success' && $success['success'] === true) {
+		$verifyPayment = SteemHelper::detectDepositDetails($id,'steempayments');
+		// You can access the return values with '$verifyPayment['xxx'], see SteemHelper Line 78';
+		return true; // Or do whatever you like to handle a success :-)
+
+	};
+
+	return false;
+
+});
+```
+
+**HTML + AJAX** *index.html*
+
+```
+<div class="row">
+	<h1>New payment</h1>
+	<p class="lead">Please follow the instructions carefully.</p>
+</div>
+
+<div class="row"  style="text-align: center">
+        <div class="col-md-12">
+        	<h3>Fixed amount</h3>
+        </div>
+        <div class="col-md-12">
+        	Send <h4><strong>0.001 SBD</strong></h4> to account <h4><strong>steempayments</strong></h4>
+            	Using the memo code <h4><strong id="payID">paymentID</strong></h4>
+        </div>
+        <div class="col-md-12"  style="margin-top:40px;">
+            	Awaiting your payment
+            	<i class="fa fa-spinner fa-spin"></i>
+        </div>
+</div>
+
+
+<script>
+
+var interval = 1000;  // 1000 = 1 second
+var paymentID;
+
+$( document ).ready(function() {
+	paymentID = SteemHelper::generatePaymentID(); // Or copy/paste it inside the JS section to directly access the function
+	$(".payID").html(paymentID);
+	doAjax();
+});
+
+function doAjax() {
+	$.ajax({
+	    type: 'GET',
+	    url: '/pay/new/<?= $paymentID ?>',
+	    data: {paymentID: paymentID, receiver: 'steempayments', amount: '0.001 SBD'},
 	    dataType: 'json',
 	    success: function (data) {
 	    	console.log("Payment completed, redirecting to a thank you page.");
