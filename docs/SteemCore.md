@@ -197,7 +197,7 @@ $( document ).ready(function() {
 function doAjax() {
 	$.ajax({
 	    type: 'GET',
-	    url: '/pay/new/<?= $paymentID ?>',
+	    url: '/pay/new/<?= paymentID ?>',
 	    data: $(this).serialize(),
 	    dataType: 'json',
 	    success: function (data) {
@@ -215,6 +215,7 @@ setTimeout(doAjax, interval);
 </script>
 ```
 
+----
 
 ###PHP + AJAX + HTML code for PAYMENTS
 
@@ -280,7 +281,7 @@ $( document ).ready(function() {
 function doAjax() {
 	$.ajax({
 	    type: 'GET',
-	    url: '/pay/new/<?= $paymentID ?>',
+	    url: '/pay/new/<?= paymentID ?>',
 	    data: {paymentID: paymentID, receiver: 'steempayments', amount: '0.001 SBD'},
 	    dataType: 'json',
 	    success: function (data) {
