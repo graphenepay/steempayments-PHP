@@ -140,7 +140,7 @@ PHP: doPayment.php
 Route::get('/pay/new/', function($id)
 {
 	$data = array(
-			'paymentID' => SteemHelper::generatePaymentID(),
+			'paymentID' => $id,				// OR simply use SteemHelper::generatePaymentID()
 			'receiver' => $_ENV['STEEMPAY_ACCOUNT'],  	// OR, fixed account like 'steempayments'
 			'amount' => "0.001 SBD",			// 0 for variable amount chosen by the buyer/donator
 			'callback' => 0,				// If needed, a callback URL (not implemented yet!)
