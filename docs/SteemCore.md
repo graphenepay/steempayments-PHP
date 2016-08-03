@@ -150,7 +150,7 @@ Route::get('/pay/new/', function($id)
 
 	if($success['status'] === 'success' && $success['success'] === true) {
 		$verifyPayment = SteemHelper::detectDepositDetails($id,'steempayments');
-			// You can access the return values with '$verifyPayment['xxx'], see SteemHelper Line 78';
+		// You can access the return values with '$verifyPayment['xxx'], see SteemHelper Line 78';
 		return true; // Or do whatever you like to handle a success :-)
 
 	};
