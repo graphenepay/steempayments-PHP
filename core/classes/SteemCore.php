@@ -81,7 +81,7 @@ class SteemCore extends JsonRPC
 
         // Read receiver transaction history
         $steem = new Steem();
-        $tx = $steem->get_account_history($_ENV['STEEMPAY_ACCOUNT'], -1, 1000);
+        $tx = $steem->get_account_history($receiver, -1, 1000);
 
         // Loop trough each object in our history
         foreach($tx as $transactions) {
