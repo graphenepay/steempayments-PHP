@@ -1,0 +1,9 @@
+-Further complete the documentation
+-Increase the number of working examples
+-Prettify the code
+-Add more nodes
+-Community contest for some nice buttons/logo
+-Improve the overall topic and SteemPayments website
+-Shopping cart plugins (WooCommerce first)
+-Donation button generator
+-GUI update by @cass (see https://steemit.com/ui/@cass/steem-pay-ment-button-design-concept-and-design-process-part-1)
